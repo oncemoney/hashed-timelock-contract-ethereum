@@ -1,0 +1,130 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ONCE LOCKUP CONTRACT DAPP</title>
+    <link rel="icon" type="image/svg" href="metamask-fox.svg" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300&display=swap" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.14.1/css/mdb.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" type="text/css" />
+  </head>
+
+  <body>
+    <div id="consolelog"></div>
+    <main class="container-fluid">
+      <header>
+        <div id="logo-container">
+          <h1 id="logo-text" class="text-center">
+          </h1>
+        </div>
+        <span id="accounts"></span>
+        <button class="btn btn-outline-success align-right mb-3"
+                id="connectButton"
+                disabled
+        >
+          Connect your wallet
+        </button>
+      </header>
+      <section>
+        <div class="row justify-content-center">
+          <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12">
+            <p class="info-text alert alert-primary">
+              Network: <span id="network"></span>
+            </p>
+            <p class="info-text alert alert-secondary">
+              ChainId: <span id="chainId"></span>
+            </p>
+
+            
+
+            <div class="card full-width">
+              <div class="card-body">
+
+                <button
+                  class="btn btn-primary btn-lg btn-block mb-3"
+                  id="deployButton"
+                  disabled
+                >
+                  Deploy Lockup Contract
+                </button>
+
+                
+              </div>
+            </div>
+
+            <div class="card full-width">
+              <div class="card-body">
+
+                <input id="approveAmount" type="text" class="form-control" placeholder="Amount">
+                <br>
+                <button
+                  class="btn btn-primary btn-lg btn-block mb-3"
+                  id="approveTokens"
+                  disabled
+                >
+                  Approve Lockup Contract
+                </button>
+
+              </div>
+            </div>
+
+            <div class="card full-width">
+              <div class="card-body">
+            <div class="row">
+              <div class="col">
+                <input id="depositAmount" type="text" class="form-control" placeholder="Amount">
+              </div>
+              <div class="col">
+                <input id="depositTimelock" type="text" class="form-control" placeholder="Timelock">
+              </div>
+            </div>
+            <br>
+            <button
+              class="btn btn-primary btn-lg btn-block mb-3"
+              id="depositButton"
+              disabled
+            >
+              Deposit
+            </button>
+            </div></div>
+
+            <div class="card full-width">
+              <div class="card-body">
+                <div class="form-group">
+                  <input id="withdrawContractId" type="text" class="form-control" placeholder="Lockup Contract ID">
+                </div>
+                
+                <div class="form-group">
+                  <input id="withdrawContractHashlock" type="text" class="form-control" placeholder="Hashlock">
+                </div>
+                
+                <button
+                  class="btn btn-primary btn-lg btn-block mb-3"
+                  id="withdrawButton"
+                  disabled
+                >
+                  Withdraw
+                </button>
+
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <script src="bundle.js" defer></script>
+  </body>
+</html>
