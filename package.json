@@ -1,9 +1,8 @@
 {
-  "name": "@metamask/test-dapp",
-  "version": "3.0.0",
-  "description": "A simple dapp used in MetaMask e2e tests.",
+  "name": "@oncemoney/lockup",
+  "version": "1.0.0",
+  "description": "A simple dapp to interact with smart contract in MetaMask.",
   "scripts": {
-    "deploy": "./deploy.sh",
     "lint": "eslint . --ext js,json && prettier ./src -c",
     "lint:fix": "eslint . --fix --ext js,json && prettier ./src -c --write",
     "lint:solium": "solium -d contracts/",
@@ -17,17 +16,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MetaMask/test-dapp.git"
+    "url": "git+https://github.com/oncemoney/lockup.git"
   },
   "files": [
     "dist/"
   ],
-  "author": "MetaMask",
+  "author": "OnceMoney",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MetaMask/test-dapp/issues"
+    "url": "https://github.com/oncemoney/lockup/issues"
   },
-  "homepage": "https://github.com/MetaMask/test-dapp#readme",
+  "homepage": "https://github.com/oncemoney/lockup#readme",
   "dependencies": {
     "@truffle/contract": "^4.1.3",
     "openzeppelin-solidity": "^2.1.2"
