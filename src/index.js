@@ -2,7 +2,6 @@
 
 import MetaMaskOnboarding from '@metamask/onboarding'
 
-
 const {
   newSecretHashPair,
   nowSeconds,
@@ -62,7 +61,6 @@ const initialize = async () => {
   }
 
 
-  const onceAddress = '0xdE73cb2eC18ad77c11085532f92118a6B696CCA8'
 
   const hashPair = newSecretHashPair()
 
@@ -96,7 +94,6 @@ const initialize = async () => {
     }
   }
 
-
   const updateButtons = () => {
     const accountButtonsDisabled = !isMetaMaskInstalled() || !isMetaMaskConnected()
     if (accountButtonsDisabled) {
@@ -105,6 +102,7 @@ const initialize = async () => {
       }
     } else {
       deployButton.disabled = false
+      withdrawButton.disabled = false
     }
 
     if (!isMetaMaskInstalled()) {
@@ -130,7 +128,7 @@ const initialize = async () => {
       return
     }
     accountButtonsInitialized = true
-
+    
     const web3Provider = window.ethereum
 
 
@@ -148,135 +146,136 @@ const initialize = async () => {
 
 
     deployButton.onclick = async () => {
+
+      if( htlcAddress !== '0x0000000000000000000000000000000000000000'){
+        screenLogger(`Contract already deployed at ${htlcAddress}`)
+        deployButton.disabled = true
+        approveTokens.disabled = false
+        return false
+      }
+
       screenLogger('Deploying ...')
 
-      HashedTimelockERC20.new({ from: accounts[0] }).then(function (contract) {
-        return contract
-      }).then(function (contract) {
+      HashedTimelockERC20.new({ from: accounts[0] }).then(function (instance) {
 
-        screenLogger(`Contract Deployed! addr:${contract.address} tx:${contract.transactionHash}`)
+        screenLogger(`HashedTimelock Contract Deployed! addr:${instance.address} tx:${instance.transactionHash}`)
+        htlcAddress = instance.address
+        deployButton.disabled = true
         approveTokens.disabled = false
-        depositButton.disabled = false
-        withdrawButton.disabled = false
-
-        approveTokens.onclick = () => {
-          OnceERC20.at(onceAddress).then(function (instance) {
-            return instance.approve(contract.address, approveAmount.value, {
-              from: accounts[0],
-            })
-          }).then(function (result) {
-            screenLogger(JSON.stringify(result))
-            screenLogger(`${approveAmount.value} ONCE approved !`)
-          }).catch(function (err) {
-            screenLogger(`ERROR! ${err.message}`)
-          })
-
-
-        }
-
-        depositButton.onclick = () => {
-          screenLogger('Deposit initiated')
-          const timelock = nowSeconds() + Number(depositTimelock.value)
-          const tokenAmount = Number(depositAmount.value)
-
-          contract.newContract(
-            hashPair.hash,
-            timelock,
-            onceAddress,
-            tokenAmount,
-            {
-              from: accounts[0],
-            },
-          ).then(function (newContractTx) {
-            const contractId = txContractId(newContractTx)
-            withdrawContractId.value = contractId
-            screenLogger(`Deposit Complete, {$contractId}`)
-            withdrawContractHashlock.value = hashPair.secret
-            // check event logs
-            const logArgs = txLoggedArgs(JSON.stringify(newContractTx))
-            screenLogger(logArgs)
-          }).catch(function (err) {
-            screenLogger(`ERROR! ${err.message}`)
-          })
-
-
-        }
-        withdrawButton.onclick = () => {
-          const contractId = withdrawContractId.value
-          const hashLockSecrect = withdrawContractHashlock.value
-          contract.refund.call(contractId, hashLockSecrect, { from: accounts[0] })
-          contract.getContract.call(contractId).then(function (result) {
-            screenLogger(JSON.stringify(result))
-            screenLogger(`${approveAmount.value} ONCE Locked !`)
-          }).catch(function (err) {
-            screenLogger(`ERROR! ${err.message}`)
-          })
-        }
 
       }).catch(function (err) {
         screenLogger(err.message)
       })
     }
 
+    approveTokens.onclick = () => {
 
-    /**
-     * Encrypt / Decrypt
-     */
+      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+        deployButton.disabled = true
+        screenLogger('Please deploy Lockup Contract first!')
+        return false
+      }
 
-    // getEncryptionKeyButton.onclick = async () => {
-    //   try {
-    //     encryptionKeyDisplay.innerText = await ethereum.request({
-    //       method: 'eth_getEncryptionPublicKey',
-    //       params: [accounts[0]],
-    //     })
-    //     encryptMessageInput.disabled = false
-    //   } catch (error) {
-    //     encryptionKeyDisplay.innerText = `Error: ${error.message}`
-    //     encryptMessageInput.disabled = true
-    //     encryptButton.disabled = true
-    //     decryptButton.disabled = true
-    //   }
-    // }
+      let tokenAmount = Number(approveAmount.value)
+      if(tokenAmount <= 0.0001) {
+        alert('Approve amount must be > 0.0001 ONCE')
+        return false
+      }
 
-    // encryptMessageInput.onkeyup = () => {
-    //   if (
-    //     !getEncryptionKeyButton.disabled &&
-    //     encryptMessageInput.value.length > 0
-    //   ) {
-    //     if (encryptButton.disabled) {
-    //       encryptButton.disabled = false
-    //     }
-    //   } else if (!encryptButton.disabled) {
-    //     encryptButton.disabled = true
-    //   }
-    // }
+      let toWeiAmount = web3.toWei(tokenAmount)
 
-    // encryptButton.onclick = () => {
-    //   try {
-    //     ciphertextDisplay.innerText = web3.toHex(JSON.stringify(
-    //       encrypt(
-    //         encryptionKeyDisplay.innerText,
-    //         { 'data': encryptMessageInput.value },
-    //         'x25519-xsalsa20-poly1305',
-    //       ),
-    //     ))
-    //     decryptButton.disabled = false
-    //   } catch (error) {
-    //     ciphertextDisplay.innerText = `Error: ${error.message}`
-    //     decryptButton.disabled = true
-    //   }
-    // }
+      OnceERC20.at(onceAddress).then(function (instance) {
+        return instance.approve(htlcAddress, toWeiAmount, {
+          from: accounts[0],
+        })
+      }).then(function (result) {
+        screenLogger(JSON.stringify(result))
+        screenLogger(`${approveAmount.value} ONCE approved !`)
+        depositButton.disabled = false
+      }).catch(function (err) {
+        screenLogger(`ERROR! ${err.message}`)
+      })
+    }
 
-    // decryptButton.onclick = async () => {
-    //   try {
-    //     cleartextDisplay.innerText = await ethereum.request({
-    //       method: 'eth_decrypt',
-    //       params: [ciphertextDisplay.innerText, ethereum.selectedAddress],
-    //     })
-    //   } catch (error) {
-    //     cleartextDisplay.innerText = `Error: ${error.message}`
-    //   }
-    // }
+    depositButton.onclick = () => {
+
+      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+        deployButton.disabled = true
+        screenLogger('Please deploy Lockup Contract first!')
+        return false
+      }
+
+      screenLogger('Deposit initiated')
+      
+      let tokenAmount = Number(depositAmount.value)
+      if(tokenAmount <= 0.0001) {
+        alert('Approve amount must be > 0.0001 ONCE')
+        return false
+      }
+
+      let toWeiAmount = web3.toWei(tokenAmount)
+
+      let timelock = nowSeconds() + Number(depositTimelock.value)
+      let t = new Date(timelock*1000).toLocaleTimeString("en-US")
+      let d = new Date(timelock*1000).toLocaleDateString("en-US")
+
+      HashedTimelockERC20.at(htlcAddress).then(function (instance) {
+        return instance.newContract(
+          hashPair.hash,
+          timelock,
+          onceAddress,
+          toWeiAmount,
+          {
+            from: accounts[0],
+          },
+        )
+      }).then(function (newContractTx) {
+        const contractId = txContractId(newContractTx)
+        withdrawContractId.value = contractId
+        screenLogger(`${tokenAmount} ONCE Deposit Complete, Lockuped up until ${d} ${t}, contract ID ${contractId}`)
+        withdrawContractHashlock.value = hashPair.secret
+        // check event logs
+        const logArgs = JSON.stringify(txLoggedArgs(newContractTx))
+        screenLogger(logArgs)
+      }).catch(function (err) {
+        screenLogger(`ERROR! ${err.message}`)
+      })
+    }
+
+    withdrawButton.onclick = () => {
+
+      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+        deployButton.disabled = true
+        screenLogger('Please deploy Lockup Contract first!')
+        return false
+      }
+
+      const contractId = String(withdrawContractId.value)
+      const hashLockSecrect = String(withdrawContractHashlock.value)
+
+      if (contractId.length === 0 ) {
+        alert('Please insert Lockup contract ID')
+        return false
+      }
+
+      if (hashLockSecrect.length === 0 ) {
+        alert('Please insert hashLock Secrect')
+        return false
+      }
+
+      HashedTimelockERC20.at(htlcAddress).then(function (instance) {
+        return instance.refund(
+          contractId, 
+          hashLockSecrect, 
+          { from: accounts[0] }
+        )
+      }).then(function (result) {
+        screenLogger('Lockup refunded! check your balance')
+        screenLogger(JSON.stringify(result))
+      }).catch(function (err) {
+        screenLogger(`ERROR! ${err.message}`)
+      })
+    }
   }
 
   function handleNewAccounts (newAccounts) {

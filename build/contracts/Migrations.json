@@ -1375,12 +1375,12 @@
     "4447": {
       "events": {},
       "links": {},
-      "address": "0x327277b8f33D9c3BB4E23A8F9dBB63daeE0fF53f",
-      "transactionHash": "0xb11442a08917d64426f049a513e0563a3b9aa321655d56baf5630fc987ab0141"
+      "address": "0x42D23C80400b6D0Beb054608CDD00DA9DA99f107",
+      "transactionHash": "0x2e158559190b40bcd344bc1a4374b72cdd1bc1ed7eec7a0e26ca7d5dda825de0"
     }
   },
   "schemaVersion": "3.2.5",
-  "updatedAt": "2020-10-01T00:40:44.588Z",
+  "updatedAt": "2020-10-01T19:31:15.906Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
