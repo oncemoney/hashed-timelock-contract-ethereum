@@ -1,3 +1,4 @@
+/*eslint linebreak-style: ["error", "windows"]*/
 const crypto = require('crypto')
 
 // Format required for sending bytes through eth client:

@@ -61,7 +61,6 @@ const initialize = async () => {
   }
 
 
-
   const hashPair = newSecretHashPair()
 
 
@@ -128,7 +127,7 @@ const initialize = async () => {
       return
     }
     accountButtonsInitialized = true
-    
+
     const web3Provider = window.ethereum
 
 
@@ -147,7 +146,7 @@ const initialize = async () => {
 
     deployButton.onclick = async () => {
 
-      if( htlcAddress !== '0x0000000000000000000000000000000000000000'){
+      if (htlcAddress !== '0x0000000000000000000000000000000000000000') {
         screenLogger(`Contract already deployed at ${htlcAddress}`)
         deployButton.disabled = true
         approveTokens.disabled = false
@@ -166,23 +165,24 @@ const initialize = async () => {
       }).catch(function (err) {
         screenLogger(err.message)
       })
+      return true
     }
 
     approveTokens.onclick = () => {
 
-      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+      if (htlcAddress === '0x0000000000000000000000000000000000000000') {
         deployButton.disabled = true
         screenLogger('Please deploy Lockup Contract first!')
         return false
       }
 
-      let tokenAmount = Number(approveAmount.value)
-      if(tokenAmount <= 0.0001) {
+      const tokenAmount = Number(approveAmount.value)
+      if (tokenAmount <= 0.0001) {
         alert('Approve amount must be > 0.0001 ONCE')
         return false
       }
 
-      let toWeiAmount = web3.toWei(tokenAmount)
+      const toWeiAmount = web3.toWei(tokenAmount)
 
       OnceERC20.at(onceAddress).then(function (instance) {
         return instance.approve(htlcAddress, toWeiAmount, {
@@ -195,29 +195,30 @@ const initialize = async () => {
       }).catch(function (err) {
         screenLogger(`ERROR! ${err.message}`)
       })
+      return true
     }
 
     depositButton.onclick = () => {
 
-      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+      if (htlcAddress === '0x0000000000000000000000000000000000000000') {
         deployButton.disabled = true
         screenLogger('Please deploy Lockup Contract first!')
         return false
       }
 
       screenLogger('Deposit initiated')
-      
-      let tokenAmount = Number(depositAmount.value)
-      if(tokenAmount <= 0.0001) {
+
+      const tokenAmount = Number(depositAmount.value)
+      if (tokenAmount <= 0.0001) {
         alert('Approve amount must be > 0.0001 ONCE')
         return false
       }
 
-      let toWeiAmount = web3.toWei(tokenAmount)
+      const toWeiAmount = web3.toWei(tokenAmount)
 
-      let timelock = nowSeconds() + Number(depositTimelock.value)
-      let t = new Date(timelock*1000).toLocaleTimeString("en-US")
-      let d = new Date(timelock*1000).toLocaleDateString("en-US")
+      const timelock = nowSeconds() + Number(depositTimelock.value)
+      const t = new Date(timelock * 1000).toLocaleTimeString('en-US')
+      const d = new Date(timelock * 1000).toLocaleDateString('en-US')
 
       HashedTimelockERC20.at(htlcAddress).then(function (instance) {
         return instance.newContract(
@@ -240,11 +241,12 @@ const initialize = async () => {
       }).catch(function (err) {
         screenLogger(`ERROR! ${err.message}`)
       })
+      return true
     }
 
     withdrawButton.onclick = () => {
 
-      if( htlcAddress === '0x0000000000000000000000000000000000000000'){
+      if (htlcAddress === '0x0000000000000000000000000000000000000000') {
         deployButton.disabled = true
         screenLogger('Please deploy Lockup Contract first!')
         return false
@@ -253,21 +255,21 @@ const initialize = async () => {
       const contractId = String(withdrawContractId.value)
       const hashLockSecrect = String(withdrawContractHashlock.value)
 
-      if (contractId.length === 0 ) {
+      if (contractId.length === 0) {
         alert('Please insert Lockup contract ID')
         return false
       }
 
-      if (hashLockSecrect.length === 0 ) {
+      if (hashLockSecrect.length === 0) {
         alert('Please insert hashLock Secrect')
         return false
       }
 
       HashedTimelockERC20.at(htlcAddress).then(function (instance) {
         return instance.refund(
-          contractId, 
-          hashLockSecrect, 
-          { from: accounts[0] }
+          contractId,
+          hashLockSecrect,
+          { from: accounts[0] },
         )
       }).then(function (result) {
         screenLogger('Lockup refunded! check your balance')
@@ -275,6 +277,7 @@ const initialize = async () => {
       }).catch(function (err) {
         screenLogger(`ERROR! ${err.message}`)
       })
+      return true
     }
   }
 
@@ -334,5 +337,3 @@ const initialize = async () => {
 }
 
 window.addEventListener('DOMContentLoaded', initialize)
-
-

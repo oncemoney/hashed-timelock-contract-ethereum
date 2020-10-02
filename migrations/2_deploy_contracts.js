@@ -1,3 +1,4 @@
+/*eslint linebreak-style: ["error", "windows"]*/
 const HashedTimelockERC20 = artifacts.require('./HashedTimelockERC20.sol')
 const OnceERC20 = artifacts.require('./OnceERC20.sol')
 

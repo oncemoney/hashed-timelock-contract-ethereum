@@ -35,9 +35,10 @@ module.exports = {
   ],
   rules: {
     'no-console': 'off',
-    'no-unused-vars': [
-      'warn',
-    ],
+    'no-unused-vars': 'off',
+    'no-undef': 'off',
+    'no-use-before-define': 'off',
+    'no-alert': 'off',
     'semi': [
       'error',
       'never',
